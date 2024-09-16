@@ -1,24 +1,24 @@
 // SPDX-License-Identifier: MIT
-// Author:Kelvin Mulei
+// Author: Kelvin Mulei
 pragma solidity ^0.8.0;
 
 contract IdentityVerification {
 
-//    //store user information using struct
+    // Store user information using struct
     struct Identity {
-        bytes32 fullName; 
-        bytes32 nationalID;
-        bytes32 passportNumber; 
-        bytes32 email; 
+        string fullName; 
+        string nationalID;
+        string passportNumber; 
+        string email; 
         bool verified;
     }
    
-//    //map address with identity
+    // Map address with identity
     mapping(address => Identity) public identities;
     address public admin;
     event IdentityVerified(address indexed user);
 
-// //msg.sender is given exclussive admin privileges
+    // msg.sender is given exclusive admin privileges
     modifier onlyAdmin() {
         require(msg.sender == admin, "Only admin can perform this action");
         _;
@@ -28,12 +28,12 @@ contract IdentityVerification {
         admin = msg.sender;
     }
 
-//    ////function to register user details
+    // Function to register user details
     function registerIdentity(
-        bytes32 _fullName, 
-        bytes32 _nationalID, 
-        bytes32 _passportNumber, 
-        bytes32 _email
+        string memory _fullName, 
+        string memory _nationalID, 
+        string memory _passportNumber, 
+        string memory _email
     ) public {
         identities[msg.sender] = Identity({
             fullName: _fullName,
@@ -44,20 +44,19 @@ contract IdentityVerification {
         });
     }
 
-// ///function to verify identity
-
+    // Function to verify identity
     function verifyIdentity(address _user) public onlyAdmin {
         require(identities[_user].verified == false, "User is already verified.");
         identities[_user].verified = true;
         emit IdentityVerified(_user);
     }
 
-// /////function to check verification status
+    // Function to check verification status
     function isVerified(address _user) public view returns (bool) {
         return identities[_user].verified;
     }
 
-   
+    // Function to update admin address
     function updateAdmin(address _newAdmin) public onlyAdmin {
         require(_newAdmin != address(0), "Invalid address");
         admin = _newAdmin;
